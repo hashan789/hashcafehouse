@@ -25,18 +25,22 @@ public class UserDataAccess {
             while(res.next()){
                 user = new User();
                 user.setEmail(res.getString("email"));
+                user.setUsername(res.getString("name"));
+                user.setPassword(res.getString("password"));
+                user.setAddress(res.getString("address"));
+                user.setId(res.getInt("id"));
             }
 
         }
         catch(Exception e){
-            JOptionPane.showMessageDialog(null,e);
+            JOptionPane.showMessageDialog(null, e, "Message", JOptionPane.ERROR_MESSAGE);
         }
         return user;
 
     }
 
     public static void update(String username, String password){
-        String query = "update employee set password = '"+ password +"' where username = '"+ username +"'";
+        String query = "update user set password = '"+ password +"' where nam e ='"+ username +"'";
         DbOperations.setDataOrDelete(query,"changed password successfully!");
     }
 }

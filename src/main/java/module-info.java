@@ -5,6 +5,6 @@ module com.example.hashcafehouse {
     requires java.desktop;
 
 
-    opens com.example.hashcafehouse to javafx.fxml;
+    opens com.example.hashcafehouse to javafx.fxml,javafx.base;
     exports com.example.hashcafehouse;
 }

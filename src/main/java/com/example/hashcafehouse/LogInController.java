@@ -1,5 +1,6 @@
 package com.example.hashcafehouse;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -8,12 +9,17 @@ import dataAccess.UserDataAccess;
 import javafx.animation.TranslateTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 import javafx.util.Duration;
+import model.Data;
 import model.User;
 
 public class LogInController {
@@ -55,6 +61,12 @@ public class LogInController {
         private TextField username;
 
         @FXML
+        private TextField usernamelogin;
+
+        @FXML
+        private PasswordField passwordlogin;
+
+        @FXML
         private Button haveAccBtn;
 
         @FXML
@@ -71,6 +83,8 @@ public class LogInController {
 
         @FXML
         private TextField passusername;
+
+        private Parent root;
 
         public void switchForm(ActionEvent event){
             TranslateTransition slider = new TranslateTransition();
@@ -135,22 +149,32 @@ public class LogInController {
             }
         }
 
-        public void login(){
+        public void login() throws IOException{
 
-            String name = username.getText();
-            String passwrd = password.getText();
-            User user = null;
-            user = UserDataAccess.login(name,passwrd);
+            String name = usernamelogin.getText();
+            String passwrd = passwordlogin.getText();
+            User user = UserDataAccess.login(name,passwrd);
             if(user == null){
                 AlertMessages alert = new AlertMessages();
                 alert.errorMessage("error","Error Message","Incorrect username or password");
             }
             else{
-                if(!user.getUsername().equals(username.getText())){
+                if(!user.getUsername().equals(usernamelogin.getText())){
                     AlertMessages alert = new AlertMessages();
                     alert.errorMessage("information","Message","wait for admin approval");
                 }
-                if(user.getUsername().equals(username.getText())){
+                if(user.getUsername().equals(usernamelogin.getText())){
+
+                    Data.username = name;
+
+                        Parent root = FXMLLoader.load(getClass().getResource("mainForm.fxml"));
+                        Stage stage = new Stage();
+                        Scene scene = new Scene(root);
+                        stage.setTitle("Main Form");
+                        stage.setScene(scene);
+                        stage.show();
+
+                        loginBtn.getScene().getWindow().hide();
 
                 }
             }
