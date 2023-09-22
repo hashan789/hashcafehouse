@@ -21,6 +21,7 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import model.Data;
+import model.Item;
 import model.Product;
 
 import java.io.File;
@@ -117,6 +118,33 @@ public class MainFormController implements Initializable{
     @FXML
     private TableView<Product> productTable;
 
+    @FXML
+    private AnchorPane menuForm;
+
+    @FXML
+    private TableColumn<?, ?> menuPrice;
+
+    @FXML
+    private TableColumn<?, ?> menuProductName;
+
+    @FXML
+    private TableColumn<?, ?> menuQuantity;
+
+    @FXML
+    private TableView<?> menuTable;
+
+    @FXML
+    private Button payBtn;
+
+    @FXML
+    private Button receiptBtn;
+
+    @FXML
+    private Button removeBtn;
+
+    @FXML
+    private TextField amountPay;
+
     private Image image;
 
 
@@ -124,7 +152,7 @@ public class MainFormController implements Initializable{
 
     private String[] statusList = {"Available", "Unavailable"};
 
-
+    private ObservableList<Item> itemListData;
 
     public void displayName(){
         String user = Data.username;
@@ -132,6 +160,9 @@ public class MainFormController implements Initializable{
     }
 
 
+    public ObservableList<Item> menuGetData(){
+        return itemListData;
+    }
 
     @FXML
     void addProduct(ActionEvent event) {
@@ -424,6 +455,21 @@ public class MainFormController implements Initializable{
         Data.path = "File:" + product.getImage();
         image = new Image(Data.path,120,127,false,true);
         productImage.setImage(image);
+    }
+
+    @FXML
+    void payBill(ActionEvent event) {
+
+    }
+
+    @FXML
+    void recepitBill(ActionEvent event) {
+
+    }
+
+    @FXML
+    void removeBill(ActionEvent event) {
+
     }
 
     @Override
