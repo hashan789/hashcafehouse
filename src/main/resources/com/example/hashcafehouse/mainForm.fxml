@@ -39,22 +39,22 @@
                                     </Label>
                                  </children>
                               </AnchorPane>
-                              <Button fx:id="dashboardBtn" layoutX="33.0" layoutY="175.0" mnemonicParsing="false" onAction="#dashboard" prefHeight="56.0" prefWidth="190.0" style="-fx-background-color: transparent; -fx-border-color: white;" stylesheets="@mainFormDesign.css" text="Dashboard" textFill="WHITE">
+                              <Button fx:id="dashboardBtn" layoutX="33.0" layoutY="175.0" mnemonicParsing="false" onAction="#switchForm" prefHeight="56.0" prefWidth="190.0" style="-fx-background-color: transparent; -fx-border-color: white;" stylesheets="@mainFormDesign.css" text="Dashboard" textFill="WHITE">
                                  <font>
                                     <Font size="17.0" />
                                  </font>
                               </Button>
-                              <Button fx:id="inventoryBtn" layoutX="33.0" layoutY="244.0" mnemonicParsing="false" onAction="#inventory" prefHeight="56.0" prefWidth="190.0" style="-fx-background-color: transparent; -fx-border-color: white;" stylesheets="@mainFormDesign.css" text="Inventory" textFill="WHITE">
+                              <Button fx:id="inventoryBtn" layoutX="33.0" layoutY="244.0" mnemonicParsing="false" onAction="#switchForm" prefHeight="56.0" prefWidth="190.0" style="-fx-background-color: transparent; -fx-border-color: white;" stylesheets="@mainFormDesign.css" text="Inventory" textFill="WHITE">
                                  <font>
                                     <Font size="17.0" />
                                  </font>
                               </Button>
-                              <Button fx:id="menuBtn" layoutX="33.0" layoutY="319.0" mnemonicParsing="false" onAction="#menu" prefHeight="56.0" prefWidth="190.0" style="-fx-background-color: transparent; -fx-border-color: white;" stylesheets="@mainFormDesign.css" text="Menu" textFill="WHITE">
+                              <Button fx:id="menuBtn" layoutX="33.0" layoutY="319.0" mnemonicParsing="false" onAction="#switchForm" prefHeight="56.0" prefWidth="190.0" style="-fx-background-color: transparent; -fx-border-color: white;" stylesheets="@mainFormDesign.css" text="Menu" textFill="WHITE">
                                  <font>
                                     <Font size="17.0" />
                                  </font>
                               </Button>
-                              <Button fx:id="customersBtn" layoutX="33.0" layoutY="394.0" mnemonicParsing="false" onAction="#customers" prefHeight="56.0" prefWidth="190.0" style="-fx-background-color: transparent; -fx-border-color: white;" stylesheets="@mainFormDesign.css" text="Customers" textFill="WHITE">
+                              <Button fx:id="customerBtn" layoutX="33.0" layoutY="394.0" mnemonicParsing="false" onAction="#switchForm" prefHeight="56.0" prefWidth="190.0" style="-fx-background-color: transparent; -fx-border-color: white;" stylesheets="@mainFormDesign.css" text="Customers" textFill="WHITE">
                                  <font>
                                     <Font size="17.0" />
                                  </font>
@@ -72,7 +72,7 @@
                <center>
                   <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                      <children>
-                        <AnchorPane fx:id="tableView" prefHeight="600.0" prefWidth="848.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="tableView" prefHeight="600.0" prefWidth="848.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <AnchorPane layoutX="14.0" layoutY="14.0" prefHeight="340.0" prefWidth="826.0" stylesheets="@mainFormDesign.css" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="14.0">
                                  <styleClass>
@@ -126,7 +126,7 @@
                               </AnchorPane>
                            </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="chartView" layoutX="108.0" layoutY="100.0" prefHeight="600.0" prefWidth="848.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="chartView" layoutX="108.0" layoutY="100.0" prefHeight="600.0" prefWidth="848.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <AnchorPane layoutX="14.0" layoutY="14.0" prefHeight="169.0" prefWidth="822.0" stylesheets="@mainFormDesign.css" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="12.0">
                                  <styleClass>
@@ -146,7 +146,7 @@
                                                             <Font size="15.0" />
                                                          </font>
                                                       </Label>
-                                                      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="204.0" layoutY="67.0" prefHeight="17.0" prefWidth="18.0" text="0" textFill="WHITE" />
+                                                      <Label fx:id="noOfCustomers" alignment="CENTER" contentDisplay="CENTER" layoutX="204.0" layoutY="67.0" prefHeight="17.0" prefWidth="18.0" text="0" textFill="WHITE" />
                                                    </children>
                                                 </AnchorPane>
                                                 <AnchorPane layoutX="271.0" layoutY="14.0" prefHeight="133.0" prefWidth="234.0" styleClass="header" stylesheets="@mainFormDesign.css">
@@ -156,7 +156,7 @@
                                                             <Font size="15.0" />
                                                          </font>
                                                       </Label>
-                                                      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="204.0" layoutY="67.0" prefHeight="17.0" prefWidth="18.0" text="0" textFill="WHITE" />
+                                                      <Label fx:id="todayIncome" alignment="CENTER" contentDisplay="CENTER" layoutX="204.0" layoutY="67.0" prefHeight="17.0" prefWidth="18.0" text="0" textFill="WHITE" />
                                                    </children>
                                                 </AnchorPane>
                                                 <AnchorPane layoutX="527.0" layoutY="14.0" prefHeight="133.0" prefWidth="234.0" styleClass="header" stylesheets="@mainFormDesign.css">
@@ -166,7 +166,7 @@
                                                             <Font size="15.0" />
                                                          </font>
                                                       </Label>
-                                                      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="204.0" layoutY="67.0" prefHeight="17.0" prefWidth="18.0" text="0" textFill="WHITE" />
+                                                      <Label fx:id="totalIncome" alignment="CENTER" contentDisplay="CENTER" layoutX="204.0" layoutY="67.0" prefHeight="17.0" prefWidth="18.0" text="0" textFill="WHITE" />
                                                    </children>
                                                 </AnchorPane>
                                                 <AnchorPane layoutX="788.0" layoutY="14.0" prefHeight="133.0" prefWidth="234.0" styleClass="header" stylesheets="@mainFormDesign.css">
@@ -176,7 +176,7 @@
                                                             <Font size="15.0" />
                                                          </font>
                                                       </Label>
-                                                      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="204.0" layoutY="67.0" prefHeight="17.0" prefWidth="18.0" text="0" textFill="WHITE" />
+                                                      <Label fx:id="noOfSoldProducts" alignment="CENTER" contentDisplay="CENTER" layoutX="204.0" layoutY="67.0" prefHeight="17.0" prefWidth="18.0" text="0" textFill="WHITE" />
                                                    </children>
                                                 </AnchorPane>
                                              </children>
@@ -243,7 +243,7 @@
                                       <content>
                                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0">
                                              <children>
-                                                <GridPane layoutY="28.0" prefHeight="30.0" prefWidth="116.0">
+                                                <GridPane fx:id="menuGridPane" layoutY="28.0" prefHeight="30.0" prefWidth="116.0">
                                                   <rowConstraints>
                                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                   </rowConstraints>
@@ -283,7 +283,7 @@
                                           <Font size="15.0" />
                                        </font>
                                     </Label>
-                                    <TextField fx:id="amountPay" layoutX="153.0" layoutY="360.0" />
+                                    <TextField fx:id="amountPay" layoutX="153.0" layoutY="360.0" onAction="#menuAmount" />
                                     <Label layoutX="108.0" layoutY="396.0" text="Change:">
                                        <font>
                                           <Font size="15.0" />
@@ -309,6 +309,31 @@
                                           <Font name="System Bold" size="15.0" />
                                        </font>
                                     </Button>
+                                 </children>
+                              </AnchorPane>
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane fx:id="customerView" prefHeight="600.0" prefWidth="848.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <children>
+                              <AnchorPane layoutX="14.0" layoutY="14.0" prefHeight="573.0" prefWidth="825.0" stylesheets="@mainFormDesign.css" AnchorPane.bottomAnchor="12.0" AnchorPane.leftAnchor="12.0" AnchorPane.rightAnchor="12.0" AnchorPane.topAnchor="12.0">
+                                 <styleClass>
+                                    <String fx:value="radius" />
+                                    <String fx:value="white-bg" />
+                                 </styleClass>
+                                 <children>
+                                    <Label layoutX="31.0" layoutY="25.0" text="Customers">
+                                       <font>
+                                          <Font size="18.0" />
+                                       </font>
+                                    </Label>
+                                    <TableView fx:id="receiptTable" layoutX="16.0" layoutY="76.0" prefHeight="484.0" prefWidth="796.0" tableMenuButtonVisible="true" AnchorPane.bottomAnchor="13.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="13.0" AnchorPane.topAnchor="76.0">
+                                      <columns>
+                                        <TableColumn fx:id="customerId" prefWidth="202.0" text="Customer ID" />
+                                        <TableColumn fx:id="customerTotal" minWidth="0.0" prefWidth="186.0" text="Total ($)" />
+                                          <TableColumn fx:id="customerDate" minWidth="0.0" prefWidth="234.0" text="Date" />
+                                          <TableColumn fx:id="cashier" minWidth="0.0" prefWidth="172.0" text="Cashier" />
+                                      </columns>
+                                    </TableView>
                                  </children>
                               </AnchorPane>
                            </children>

@@ -1,7 +1,9 @@
 package com.example.hashcafehouse;
 
 import alerts.AlertMessages;
+import dataAccess.CustomerDataAccess;
 import dataAccess.ProductDataAccess;
+import dataAccess.ReceiptDataAccess;
 import dataAccess.UserDataAccess;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -9,27 +11,28 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.AreaChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import model.Data;
-import model.Item;
-import model.Product;
+import model.*;
 
 import java.io.File;
 import java.net.URL;
 import java.security.cert.Extension;
 import java.util.*;
 
-public class MainFormController implements Initializable{
+public class MainFormController implements Initializable {
 
     @FXML
     private Button addBtn;
@@ -44,7 +47,28 @@ public class MainFormController implements Initializable{
     private AreaChart<?, ?> customerChart;
 
     @FXML
+    private Button customerBtn;
+
+    @FXML
     private Button customersBtn;
+
+    @FXML
+    private TableColumn<Customer,Date> customerDate;
+
+    @FXML
+    private AnchorPane customerForm;
+
+    @FXML
+    private AnchorPane customerView;
+
+    @FXML
+    private TableColumn<Customer,Integer> customerId;
+
+    @FXML
+    private TableView<Customer> customerTable;
+
+    @FXML
+    private TableColumn<Customer, Integer> customerTotal;
 
     @FXML
     private Button dashboardBtn;
@@ -71,13 +95,16 @@ public class MainFormController implements Initializable{
     private Button menuBtn;
 
     @FXML
+    private GridPane menuGridPane;
+
+    @FXML
     private TableColumn<Product, Integer> price;
 
     @FXML
     private TextField priceF;
 
     @FXML
-    private TableColumn<Product,String> productId;
+    private TableColumn<Product, String> productId;
 
     @FXML
     private TextField productIdF;
@@ -86,13 +113,13 @@ public class MainFormController implements Initializable{
     private ImageView productImage;
 
     @FXML
-    private TableColumn<Product,String> productName;
+    private TableColumn<Product, String> productName;
 
     @FXML
     private TextField productNameF;
 
     @FXML
-    private TableColumn<Product,String> productType;
+    private TableColumn<Product, String> productType;
 
     @FXML
     private ComboBox<Product> productTypeF;
@@ -104,7 +131,7 @@ public class MainFormController implements Initializable{
     private ComboBox<Product> statusF;
 
     @FXML
-    private TableColumn<Product,Integer> stock;
+    private TableColumn<Product, Integer> stock;
 
     @FXML
     private TextField stockF;
@@ -122,16 +149,31 @@ public class MainFormController implements Initializable{
     private AnchorPane menuForm;
 
     @FXML
-    private TableColumn<?, ?> menuPrice;
+    private TableColumn<Receipt, String> cashier;
 
     @FXML
-    private TableColumn<?, ?> menuProductName;
+    private TableColumn<Receipt, Integer> menuPrice;
 
     @FXML
-    private TableColumn<?, ?> menuQuantity;
+    private TableColumn<Receipt, String> menuProductName;
 
     @FXML
-    private TableView<?> menuTable;
+    private TableColumn<Receipt, Integer> menuQuantity;
+
+    @FXML
+    private TableView<Customer> menuTable;
+
+    @FXML
+    private TableView<Receipt> receiptTable;
+
+    @FXML
+    private Label menuTotal;
+
+    @FXML
+    private Label menuamount;
+
+    @FXML
+    private Label menuChange;
 
     @FXML
     private Button payBtn;
@@ -145,7 +187,24 @@ public class MainFormController implements Initializable{
     @FXML
     private TextField amountPay;
 
+    @FXML
+    private Label noOfCustomers;
+
+    @FXML
+    private Label noOfSoldProducts;
+
+    @FXML
+    private Label todayIncome;
+
+    @FXML
+    private Label totalIncome;
+
+    private int cid;
+    private int getId;
     private Image image;
+    private double total;
+    private double amount;
+    private double change;
 
 
     private String[] typeList = {"Meals", "Drinks"};
@@ -153,15 +212,356 @@ public class MainFormController implements Initializable{
     private String[] statusList = {"Available", "Unavailable"};
 
     private ObservableList<Item> itemListData;
+    private ObservableList<Receipt> customerListData;
 
-    public void displayName(){
+    public void displayName() {
         String user = Data.username;
-        user = user.substring(0,1).toUpperCase() + user.substring(1);
+        user = user.substring(0, 1).toUpperCase() + user.substring(1);
+    }
+
+    public void displayDashboardCustomers(){
+        incomeChart.getData().clear();
+
+        try{
+            Receipt receipt = ReceiptDataAccess.getCountId();
+            int countId = receipt.getId();
+            noOfCustomers.setText(String.valueOf(countId));
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void displayDashboardTodayIncome(){
+        incomeChart.getData().clear();
+
+        try{
+            Receipt receipt = ReceiptDataAccess.getSumIdWithdate();
+            double sumId = receipt.getTotal();
+            todayIncome.setText("$" + sumId);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void displayDashboardTotalIncome(){
+        incomeChart.getData().clear();
+
+        try{
+            Receipt receipt = ReceiptDataAccess.getSumId();
+            double sumId = receipt.getTotal();
+            todayIncome.setText("$" + Float.parseFloat(String.valueOf(sumId)));
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void displayDashboardSoldProducts(){
+        incomeChart.getData().clear();
+
+        try{
+            Customer customer = CustomerDataAccess.getQuantity();
+            int noOfPrducts = customer.getQuantity();
+            totalIncome.setText(String.valueOf(noOfPrducts));
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void dashboardIncomeChart(){
+
+        incomeChart.getData().clear();
+
+        XYChart.Series chart = new XYChart.Series();
+        try{
+            Receipt receipt = ReceiptDataAccess.getSumTotalAndDate();
+            chart.getData().add(new XYChart.Data<>(receipt.getTotal(),receipt.getDate()));
+
+            incomeChart.getData().add(chart);
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void dashboardCustomerChart(){
+
+        customerChart.getData().clear();
+
+        XYChart.Series chart = new XYChart.Series();
+        try{
+            Receipt receipt = ReceiptDataAccess.getSumTotalAndDate();
+            chart.getData().add(new XYChart.Data<>(receipt.getTotal(),receipt.getDate()));
+
+            customerChart.getData().add(chart);
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
 
+
+    public ObservableList<Customer> menuDisplayOrder() {
+
+        ObservableList<Customer> listData = FXCollections.observableArrayList();
+
+        try {
+            Customer customer = CustomerDataAccess.getCustomerDetails();
+            listData.add(customer);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    return  listData;
+    }
+
+
+    public ObservableList<Receipt> customersDataList(){
+
+        ObservableList<Receipt> listData = FXCollections.observableArrayList();
+        try {
+            Receipt receipt = ReceiptDataAccess.getReciepts();
+            listData.add(receipt);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return listData;
+    }
+
+    public void customerShowData(){
+        customerListData = customersDataList();
+
+        customerId.setCellValueFactory(new PropertyValueFactory<>("customerId"));
+        customerTotal.setCellValueFactory(new PropertyValueFactory<>("total"));
+        customerDate.setCellValueFactory(new PropertyValueFactory<>("date"));
+        cashier.setCellValueFactory(new PropertyValueFactory<>("username"));
+
+        receiptTable.setItems(customerListData);
+    }
+
+
+    public void menuAmount(){
+        menuGetTotal();
+        if(menuamount.getText().isEmpty() || total == 0){
+            AlertMessages alert = new AlertMessages();
+            alert.errorMessage("error","Error Message","invalid");
+        }
+        else{
+            amount = Double.parseDouble(menuamount.getText());
+            if(amount < total){
+                menuamount.setText("");
+            }
+            else{
+                change = (amount - total);
+                menuamount.setText("$" + change);
+            }
+        }
+    }
+
+
+
+    public ObservableList<Customer> menuListData;
+
+    public void menuShowData(){
+
+        menuListData = menuDisplayOrder();
+
+        menuProductName.setCellValueFactory(new PropertyValueFactory<>("productName"));
+        menuQuantity.setCellValueFactory(new PropertyValueFactory<>("quantity"));
+        menuPrice.setCellValueFactory(new PropertyValueFactory<>("productName"));
+
+        menuTable.setItems(menuListData);
+    }
+
+    public void menuRestart(){
+        total = 0;
+        change = 0;
+        amount = 0;
+        menuTotal.setText("$0.0");
+        menuamount.setText("");
+        menuChange.setText("$0.0");
+
+    }
+
     public ObservableList<Item> menuGetData(){
-        return itemListData;
+
+        ObservableList<Item> listData = FXCollections.observableArrayList();
+
+        Item item = new Item();
+        item = ProductDataAccess.getItems();
+        listData.add(item);
+
+        return listData;
+    }
+
+    public ObservableList<Customer> menuGetOrder(){
+        customerId();
+
+        ObservableList<Customer> listData = FXCollections.observableArrayList();
+
+        Customer customer = new Customer();
+        customer = CustomerDataAccess.getItemsWhereId(cid);
+        listData.add(customer);
+
+        return listData;
+    }
+
+
+
+    private ObservableList<Customer> menuOrderListData;
+
+    public void menuShowOrderData(){
+
+        menuOrderListData = menuGetOrder(); //menuGetOrder()
+
+        menuProductName.setCellValueFactory(new PropertyValueFactory<>("productName"));
+        menuQuantity.setCellValueFactory(new PropertyValueFactory<>("quantity"));
+        menuPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
+
+        menuTable.setItems(menuListData);
+
+    }
+
+
+
+    public void menuGetTotal(){
+         customerId();
+         Customer total1 = CustomerDataAccess.getTotal(cid,total);
+         total = total1.getPrice();
+    }
+
+    public void menuDisplayTotal(){
+        menuGetTotal();
+        menuTotal.setText("$" + total);
+    }
+
+    public void menuDisplayCard(){
+
+        itemListData.clear();
+        itemListData.addAll(menuGetData());
+
+        int row = 0;
+        int column = 0;
+
+        menuGridPane.getChildren().clear();
+        menuGridPane.getRowConstraints().clear();
+        menuGridPane.getColumnConstraints().clear();
+
+        for(int i = 0;i < itemListData.size(); i++){
+
+            try{
+                FXMLLoader loader = new FXMLLoader();
+                loader.setLocation(getClass().getResource("productCard.fxml"));
+                AnchorPane pane = loader.load();
+                ProductCardController card = loader.getController();
+                card.setData(itemListData.get(i));
+
+                if(column == 3){
+                    column = 0;
+                    row += 1;
+                }
+
+
+                menuGridPane.add(pane,column++,row);
+                GridPane.setMargin(pane, new Insets(10));
+
+
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void switchForm(ActionEvent event){
+
+        if(event.getSource() == dashboardBtn){
+            tableView.setVisible(false);
+            chartView.setVisible(true);
+            menuForm.setVisible(false);
+            customerView.setVisible(false);
+
+            displayDashboardCustomers();
+            displayDashboardTodayIncome();
+            displayDashboardTotalIncome();
+            displayDashboardSoldProducts();
+
+            dashboardIncomeChart();
+            dashboardCustomerChart();
+        }
+        else if(event.getSource() == inventoryBtn){
+            tableView.setVisible(true);
+            chartView.setVisible(false);
+            menuForm.setVisible(false);
+            customerView.setVisible(false);
+
+            chooseStatus();
+            chooseType();
+        }
+        else if(event.getSource() == menuBtn){
+            tableView.setVisible(false);
+            chartView.setVisible(false);
+            menuForm.setVisible(true);
+            customerView.setVisible(false);
+
+            menuDisplayCard();
+            menuDisplayTotal();
+            menuShowOrderData();
+
+        }
+        else if(event.getSource() == customerBtn){
+            tableView.setVisible(false);
+            chartView.setVisible(false);
+            menuForm.setVisible(false);
+            customerView.setVisible(true);
+
+
+            customerShowData();
+
+        }
+    }
+
+
+    public void customerId(){
+
+        try{
+            Customer cId = CustomerDataAccess.getMaxId();
+            cid = cId.getCustomerId();
+            Receipt checkId = ReceiptDataAccess.gerMaxId();
+            int checkid = checkId.getCustomerId();
+
+            if(cid == 0){
+                cid += 1;
+            }
+            else if(cid == checkid){
+                cid += 1;
+            }
+
+            Data.cID = cid;
+
+        }
+        catch (Exception e){
+
+        }
+
+
+
+
+    }
+
+    public void menuSelectOrder(){ //menuTable
+        Customer customer = menuTable.getSelectionModel().getSelectedItem();
+        int num = menuTable.getSelectionModel().getSelectedIndex();
+
+        if((num-1) < -1) return;
+
+        getId = customer.getId();
+
     }
 
     @FXML
@@ -460,6 +860,38 @@ public class MainFormController implements Initializable{
     @FXML
     void payBill(ActionEvent event) {
 
+        if(total == 0){
+            AlertMessages alert = new AlertMessages();
+            alert.errorMessage("error","Error Message","Please Choose Your Order first!");
+        }
+        else{
+            try{
+                if(amount == 0){
+                    AlertMessages alert = new AlertMessages();
+                    alert.errorMessage("error","Error Message","Something Wrong!");
+                }
+                else{
+                    customerId();
+                    menuGetTotal();
+
+                    Date date = new Date();
+                    java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+
+                    Receipt receipt = new Receipt();
+                    receipt.setCustomerId(cid);
+                    receipt.setTotal(total);
+                    receipt.setDate(sqlDate);
+                    receipt.setUsername(Data.username);
+
+                    menuShowOrderData();
+                    menuRestart();
+                }
+            }
+            catch (Exception e){
+
+            }
+        }
+
     }
 
     @FXML
@@ -470,14 +902,46 @@ public class MainFormController implements Initializable{
     @FXML
     void removeBill(ActionEvent event) {
 
+        if(getId == 0){
+            AlertMessages alert = new AlertMessages();
+            alert.errorMessage("error","Error Message","Please select the order you want to remove");
+        }
+        else{
+            try {
+                CustomerDataAccess.delete(getId);
+
+                menuShowOrderData();
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
+        displayDashboardCustomers();
+        displayDashboardTodayIncome();
+        displayDashboardTotalIncome();
+        displayDashboardSoldProducts();
+
+        dashboardIncomeChart();
+        dashboardCustomerChart();
+
         chooseStatus();
         chooseType();
         inventoryShowData();
+        //menuDisplayCard();
+        //menuDisplayOrder();
+        menuDisplayTotal();
+        menuShowOrderData();
+        menuDisplayCard();
+        menuGetOrder();
+        customerShowData();
+
+
 
     }
 }
