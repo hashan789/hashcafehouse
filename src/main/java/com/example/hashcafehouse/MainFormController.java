@@ -922,24 +922,24 @@ public class MainFormController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
-        displayDashboardCustomers();
-        displayDashboardTodayIncome();
-        displayDashboardTotalIncome();
-        displayDashboardSoldProducts();
-
-        dashboardIncomeChart();
-        dashboardCustomerChart();
+//        displayDashboardCustomers();
+//        displayDashboardTodayIncome();
+//        displayDashboardTotalIncome();
+//        displayDashboardSoldProducts();
+//
+//        dashboardIncomeChart();
+//        dashboardCustomerChart();
 
         chooseStatus();
         chooseType();
         inventoryShowData();
         //menuDisplayCard();
         //menuDisplayOrder();
-        menuDisplayTotal();
-        menuShowOrderData();
-        menuDisplayCard();
-        menuGetOrder();
-        customerShowData();
+//        menuDisplayTotal();
+//        menuShowOrderData();
+//        menuDisplayCard();
+//        menuGetOrder();
+//        customerShowData();hashan
 
 
 

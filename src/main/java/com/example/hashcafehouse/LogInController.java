@@ -167,7 +167,7 @@ public class LogInController {
 
                     Data.username = name;
 
-                        Parent root = FXMLLoader.load(getClass().getResource("mainForm.fxml"));
+                        Parent root = FXMLLoader.load(getClass().getResource("mainFhashanorm.fxml"));
                         Stage stage = new Stage();
                         Scene scene = new Scene(root);
                         stage.setTitle("Main Form");
