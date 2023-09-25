@@ -8,30 +8,21 @@ import java.sql.ResultSet;
 
 public class ProductDataAccess {
 
-    public static Product getProducts(){
+    public static ProductTable getProducts(){
 
         String query = "select * from product";
-        Product product = null;
+        ProductTable productTable = null;
         try{
             ResultSet res = DbOperations.getData(query);
             while(res.next()){
-                product = new Product();
-                product.setProductId(res.getString("productId"));
-                product.setProductName(res.getString("productName"));
-                product.setType(res.getString("type"));
-                product.setStock(res.getInt("stock"));
-                product.setPrice(res.getInt("price"));
-                product.setId(res.getInt("id"));
-                product.setStatus(res.getString("status"));
-                product.setDate(res.getDate("date"));
-                product.setImage(res.getString("image"));
+                productTable = new ProductTable(res.getString("productId"),res.getString("productName"),res.getString("type"),String.valueOf(res.getInt("stock")),String.valueOf(res.getInt("price")),String.valueOf(res.getDate("date")));
             }
 
         }
         catch(Exception e){
             JOptionPane.showMessageDialog(null, e, "Message", JOptionPane.ERROR_MESSAGE);
         }
-        return product;
+        return productTable;
 
     }
 

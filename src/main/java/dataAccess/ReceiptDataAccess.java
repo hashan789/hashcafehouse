@@ -3,6 +3,7 @@ package dataAccess;
 import model.Customer;
 import model.Product;
 import model.Receipt;
+import model.ReceiptTable;
 
 import javax.swing.*;
 import java.sql.ResultSet;
@@ -37,23 +38,19 @@ public class ReceiptDataAccess {
 
     }
 
-    public static Receipt getReciepts(){
+    public static ReceiptTable getReciepts(){
         String query = "select * from receipt";
-        Receipt receipt = null;
+        ReceiptTable receiptTable = null;
         try{
             ResultSet res = DbOperations.getData(query);
             if(res.next()){
-                receipt.setId(res.getInt("id"));
-                receipt.setCustomerId(res.getInt("customerId"));
-                receipt.setTotal(res.getDouble("total"));
-                receipt.setDate(res.getDate("date"));
-                receipt.setUsername(res.getString("username"));
+                receiptTable = new ReceiptTable(String.valueOf(res.getInt("customerId")),String.valueOf(res.getDouble("total")),String.valueOf(res.getDate("date")),res.getString("username"));
             }
         }
         catch(Exception e){
             JOptionPane.showMessageDialog(null, e, "Message", JOptionPane.ERROR_MESSAGE);
         }
-        return receipt;
+        return receiptTable;
     }
 
     public static Receipt getCountId(){

@@ -1,6 +1,7 @@
 package dataAccess;
 
 import model.Customer;
+import model.CustomerTable;
 import model.Product;
 import model.Receipt;
 
@@ -75,27 +76,21 @@ public class CustomerDataAccess {
         return customer;
     }
 
-    public static Customer getItemsWhereId(int id){
+    public static CustomerTable getItemsWhereId(int id){
 
         String query = "select * from customer where customerId = " + id;
-        Customer customer = null;
+        CustomerTable customerTable = null;
         try{
             ResultSet res = DbOperations.getData(query);
             while(res.next()){
-                customer = new Customer();
-                customer.setCustomerId(res.getInt("customerId"));
-                customer.setProductName(res.getString("productName"));
-                customer.setQuantity(res.getInt("Quantity"));
-                customer.setPrice(res.getInt("price"));
-                customer.setDate(res.getDate("date"));
-                customer.setUsername(res.getString("username"));
+                customerTable = new CustomerTable(res.getString("productName"),String.valueOf(res.getString("quantity")),String.valueOf(res.getString("price")));
             }
 
         }
         catch(Exception e){
             JOptionPane.showMessageDialog(null, e, "Message", JOptionPane.ERROR_MESSAGE);
         }
-        return customer;
+        return customerTable;
 
     }
 

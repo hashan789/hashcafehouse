@@ -53,7 +53,7 @@ public class MainFormController implements Initializable {
     private Button customersBtn;
 
     @FXML
-    private TableColumn<Customer,Date> customerDate;
+    private TableColumn<ReceiptTable, String> customerDate;
 
     @FXML
     private AnchorPane customerForm;
@@ -62,19 +62,19 @@ public class MainFormController implements Initializable {
     private AnchorPane customerView;
 
     @FXML
-    private TableColumn<Customer,Integer> customerId;
+    private TableColumn<ReceiptTable, String> customerId;
 
     @FXML
     private TableView<Customer> customerTable;
 
     @FXML
-    private TableColumn<Customer, Integer> customerTotal;
+    private TableColumn<ReceiptTable, String> customerTotal;
 
     @FXML
     private Button dashboardBtn;
 
     @FXML
-    private TableColumn<Product, Date> date;
+    private TableColumn<ProductTable, String> date;
 
     @FXML
     private Button deleteBtn;
@@ -98,13 +98,13 @@ public class MainFormController implements Initializable {
     private GridPane menuGridPane;
 
     @FXML
-    private TableColumn<Product, Integer> price;
+    private TableColumn<ProductTable, String> price;
 
     @FXML
     private TextField priceF;
 
     @FXML
-    private TableColumn<Product, String> productId;
+    private TableColumn<ProductTable, String> productId;
 
     @FXML
     private TextField productIdF;
@@ -113,13 +113,13 @@ public class MainFormController implements Initializable {
     private ImageView productImage;
 
     @FXML
-    private TableColumn<Product, String> productName;
+    private TableColumn<ProductTable, String> productName;
 
     @FXML
     private TextField productNameF;
 
     @FXML
-    private TableColumn<Product, String> productType;
+    private TableColumn<ProductTable, String> productType;
 
     @FXML
     private ComboBox<Product> productTypeF;
@@ -131,7 +131,7 @@ public class MainFormController implements Initializable {
     private ComboBox<Product> statusF;
 
     @FXML
-    private TableColumn<Product, Integer> stock;
+    private TableColumn<ProductTable, String> stock;
 
     @FXML
     private TextField stockF;
@@ -143,28 +143,28 @@ public class MainFormController implements Initializable {
     private Button updateBtn;
 
     @FXML
-    private TableView<Product> productTable;
+    private TableView<ProductTable> productTable;
 
     @FXML
     private AnchorPane menuForm;
 
     @FXML
-    private TableColumn<Receipt, String> cashier;
+    private TableColumn<ReceiptTable, String> cashier;
 
     @FXML
-    private TableColumn<Receipt, Integer> menuPrice;
+    private TableColumn<CustomerTable, String> menuPrice;
 
     @FXML
-    private TableColumn<Receipt, String> menuProductName;
+    private TableColumn<CustomerTable, String> menuProductName;
 
     @FXML
-    private TableColumn<Receipt, Integer> menuQuantity;
+    private TableColumn<CustomerTable, String> menuQuantity;
 
     @FXML
-    private TableView<Customer> menuTable;
+    private TableView<CustomerTable> menuTable;
 
     @FXML
-    private TableView<Receipt> receiptTable;
+    private TableView<ReceiptTable> receiptTable;
 
     @FXML
     private Label menuTotal;
@@ -212,7 +212,7 @@ public class MainFormController implements Initializable {
     private String[] statusList = {"Available", "Unavailable"};
 
     private ObservableList<Item> itemListData;
-    private ObservableList<Receipt> customerListData;
+    private ObservableList<ReceiptTable> customerListData;
 
     public void displayName() {
         String user = Data.username;
@@ -319,12 +319,12 @@ public class MainFormController implements Initializable {
     }
 
 
-    public ObservableList<Receipt> customersDataList(){
+    public ObservableList<ReceiptTable> customersDataList(){
 
-        ObservableList<Receipt> listData = FXCollections.observableArrayList();
+        ObservableList<ReceiptTable> listData = FXCollections.observableArrayList();
         try {
-            Receipt receipt = ReceiptDataAccess.getReciepts();
-            listData.add(receipt);
+            ReceiptTable receiptTable = ReceiptDataAccess.getReciepts();
+            listData.add(receiptTable);
         }
         catch (Exception e){
             e.printStackTrace();
@@ -336,10 +336,10 @@ public class MainFormController implements Initializable {
     public void customerShowData(){
         customerListData = customersDataList();
 
-        customerId.setCellValueFactory(new PropertyValueFactory<>("customerId"));
-        customerTotal.setCellValueFactory(new PropertyValueFactory<>("total"));
-        customerDate.setCellValueFactory(new PropertyValueFactory<>("date"));
-        cashier.setCellValueFactory(new PropertyValueFactory<>("username"));
+        customerId.setCellValueFactory(cellData -> cellData.getValue().customerIdProperty());
+        customerTotal.setCellValueFactory(cellData -> cellData.getValue().totalProperty());
+        customerDate.setCellValueFactory(cellData -> cellData.getValue().dateProperty());
+        cashier.setCellValueFactory(cellData -> cellData.getValue().usernameProperty());
 
         receiptTable.setItems(customerListData);
     }
@@ -365,17 +365,17 @@ public class MainFormController implements Initializable {
 
 
 
-    public ObservableList<Customer> menuListData;
 
-    public void menuShowData(){
 
-        menuListData = menuDisplayOrder();
+    public void menuShowData(){  //Duplicate of menuShowOrderData
+
+        //menuListData = menuDisplayOrder();
 
         menuProductName.setCellValueFactory(new PropertyValueFactory<>("productName"));
         menuQuantity.setCellValueFactory(new PropertyValueFactory<>("quantity"));
         menuPrice.setCellValueFactory(new PropertyValueFactory<>("productName"));
 
-        menuTable.setItems(menuListData);
+        //menuTable.setItems(menuListData);
     }
 
     public void menuRestart(){
@@ -399,29 +399,29 @@ public class MainFormController implements Initializable {
         return listData;
     }
 
-    public ObservableList<Customer> menuGetOrder(){
+    public ObservableList<CustomerTable> menuGetOrder(){
         customerId();
 
-        ObservableList<Customer> listData = FXCollections.observableArrayList();
+        ObservableList<CustomerTable> listData = FXCollections.observableArrayList();
 
-        Customer customer = new Customer();
-        customer = CustomerDataAccess.getItemsWhereId(cid);
-        listData.add(customer);
+        CustomerTable customerTable = CustomerDataAccess.getItemsWhereId(cid);
+        listData.add(customerTable);
 
         return listData;
     }
 
 
 
-    private ObservableList<Customer> menuOrderListData;
+    public ObservableList<CustomerTable> menuListData;
+    private ObservableList<CustomerTable> menuOrderListData;
 
     public void menuShowOrderData(){
 
         menuOrderListData = menuGetOrder(); //menuGetOrder()
 
-        menuProductName.setCellValueFactory(new PropertyValueFactory<>("productName"));
-        menuQuantity.setCellValueFactory(new PropertyValueFactory<>("quantity"));
-        menuPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
+        menuProductName.setCellValueFactory(cellData -> cellData.getValue().productNameProperty());
+        menuQuantity.setCellValueFactory(cellData -> cellData.getValue().quantityProperty());
+        menuPrice.setCellValueFactory(cellData -> cellData.getValue().priceProperty());
 
         menuTable.setItems(menuListData);
 
@@ -546,6 +546,7 @@ public class MainFormController implements Initializable {
 
         }
         catch (Exception e){
+            e.printStackTrace();
 
         }
 
@@ -555,12 +556,12 @@ public class MainFormController implements Initializable {
     }
 
     public void menuSelectOrder(){ //menuTable
-        Customer customer = menuTable.getSelectionModel().getSelectedItem();
+        CustomerTable customerTable = menuTable.getSelectionModel().getSelectedItem();
         int num = menuTable.getSelectionModel().getSelectedIndex();
 
         if((num-1) < -1) return;
 
-        getId = customer.getId();
+        getId = customerTable.getId();
 
     }
 
@@ -812,11 +813,11 @@ public class MainFormController implements Initializable {
 
     }
 
-    public ObservableList<Product> inventoryDataList(){
-        ObservableList<Product> listData = FXCollections.observableArrayList();
+    public ObservableList<ProductTable> inventoryDataList(){
+        ObservableList<ProductTable> listData = FXCollections.observableArrayList();
         try{
-            Product product = ProductDataAccess.getProducts();
-            listData.add(product);
+            ProductTable productTable = ProductDataAccess.getProducts();
+            listData.add(productTable);
         }
         catch(Exception e){
             e.printStackTrace();
@@ -825,16 +826,16 @@ public class MainFormController implements Initializable {
         return listData;
     }
 
-    private ObservableList<Product> inventoryListData;
+    private ObservableList<ProductTable> inventoryListData;
 
     public void inventoryShowData(){
         inventoryListData = inventoryDataList();
-        productId.setCellValueFactory(new PropertyValueFactory<Product, String>("productId"));
-        productName.setCellValueFactory(new PropertyValueFactory<Product, String>("productName"));
-        productType.setCellValueFactory(new PropertyValueFactory<Product, String>("type"));
-        stock.setCellValueFactory(new PropertyValueFactory<Product, Integer>("stock"));
-        price.setCellValueFactory(new PropertyValueFactory<Product, Integer>("price"));
-        date.setCellValueFactory(new PropertyValueFactory<Product, Date>("date"));
+        productId.setCellValueFactory(cellData -> cellData.getValue().productIdProperty());
+        productName.setCellValueFactory(cellData -> cellData.getValue().productNameProperty());
+        productType.setCellValueFactory(cellData -> cellData.getValue().typeProperty());
+        stock.setCellValueFactory(cellData -> cellData.getValue().stockProperty());
+        price.setCellValueFactory(cellData -> cellData.getValue().priceProperty());
+        date.setCellValueFactory(cellData -> cellData.getValue().dateProperty());
 
         productTable.setItems(inventoryListData);
 
@@ -842,7 +843,7 @@ public class MainFormController implements Initializable {
     }
 
     public void selectProducts(){
-        Product product = productTable.getSelectionModel().getSelectedItem();
+        ProductTable product = productTable.getSelectionModel().getSelectedItem();
         int num = productTable.getSelectionModel().getSelectedIndex();
 
         if((num-1) < -1) return;
@@ -855,6 +856,8 @@ public class MainFormController implements Initializable {
         Data.path = "File:" + product.getImage();
         image = new Image(Data.path,120,127,false,true);
         productImage.setImage(image);
+
+        System.out.println("sd");
     }
 
     @FXML
@@ -922,24 +925,24 @@ public class MainFormController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
-//        displayDashboardCustomers();
-//        displayDashboardTodayIncome();
-//        displayDashboardTotalIncome();
-//        displayDashboardSoldProducts();
-//
-//        dashboardIncomeChart();
-//        dashboardCustomerChart();
+        displayDashboardCustomers();
+        displayDashboardTodayIncome();
+        displayDashboardTotalIncome();
+        displayDashboardSoldProducts();
+
+        dashboardIncomeChart();
+        dashboardCustomerChart();
 
         chooseStatus();
         chooseType();
         inventoryShowData();
         //menuDisplayCard();
-        //menuDisplayOrder();
-//        menuDisplayTotal();
-//        menuShowOrderData();
-//        menuDisplayCard();
-//        menuGetOrder();
-//        customerShowData();hashan
+        menuDisplayOrder();
+        menuDisplayTotal();
+        menuShowOrderData();
+        menuDisplayCard();
+        menuGetOrder();
+        customerShowData();
 
 
 
