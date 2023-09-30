@@ -55,6 +55,7 @@ public class ProductCardController implements Initializable {
     public void setData(Item itemData){
         this.itemData = itemData;
 
+        productId = itemData.getItemId();
         itemName.setText(itemData.getItemName());
         itemPrice.setText(String.valueOf(itemData.getPrice()));
         String path = "File:" + itemData.getImage();
@@ -83,12 +84,15 @@ public class ProductCardController implements Initializable {
 
     @FXML
     public void addItems(){
+
+        MainFormController mainForm = new MainFormController();
+        mainForm.customerId();
+
         quantity = amountItems.getValue();
         
         int checkStock = 0;
 
-        Product product = new Product();
-        product = ProductDataAccess.getStock(itemName.getText());
+        Product product = ProductDataAccess.getStock(itemName.getText());
         checkStock = product.getStock();
 
         if(checkStock == 0){
@@ -108,8 +112,6 @@ public class ProductCardController implements Initializable {
             customer.setCustomerId(Data.cID);
             customer.setProductName(itemName.getText());
             customer.setQuantity(quantity);
-            ProductDataAccess.getStatus(itemName.getText(),quantity,customer);
-
             totalPrice = (quantity * pr);
 
             Date date = new Date();
@@ -117,12 +119,19 @@ public class ProductCardController implements Initializable {
 
             customer.setDate(sqlDate);
             customer.setUsername(Data.username);
-            CustomerDataAccess.save(customer);
+            customer.setPrice(totalPrice);
+            ProductDataAccess.getStatus(itemName.getText(),quantity,customer);
+
+         //   CustomerDataAccess.save(customer);
+
+            int updateStock = checkStock - quantity;
+
+            ProductDataAccess.updateStock(updateStock,itemName.getText());
 
             AlertMessages alert = new AlertMessages();
             alert.errorMessage("information","Information Message","Successfully Added!");
 
-            MainFormController mainForm = new MainFormController();
+
             mainForm.menuDisplayTotal();
         }
         

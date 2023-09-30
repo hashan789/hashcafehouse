@@ -40,7 +40,7 @@ public class UserDataAccess {
     }
 
     public static void update(String username, String password){
-        String query = "update user set password = '"+ password +"' where nam e ='"+ username +"'";
+        String query = "update user set password = '"+ password +"' where name ='"+ username +"'";
         DbOperations.setDataOrDelete(query,"changed password successfully!");
     }
 }

@@ -8,6 +8,7 @@ public class Receipt {
     private int customerId;
     private String username;
     private double total;
+    private float sumTotal;
     private Date date;
 
     public int getId() {
@@ -40,6 +41,14 @@ public class Receipt {
 
     public void setTotal(double total) {
         this.total = total;
+    }
+
+    public float getSumTotal() {
+        return sumTotal;
+    }
+
+    public void setSumTotal(float sumTotal) {
+        this.sumTotal = sumTotal;
     }
 
     public Date getDate() {

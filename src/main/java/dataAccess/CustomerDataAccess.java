@@ -1,5 +1,7 @@
 package dataAccess;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import model.Customer;
 import model.CustomerTable;
 import model.Product;
@@ -46,12 +48,13 @@ public class CustomerDataAccess {
     }
 
     public static Customer getMaxId(){
-        String query = "select max(customerId) from customer";
+        String query = "select max(customerId) as maxCustomerId from customer";
         Customer customer = null;
         try{
             ResultSet res = DbOperations.getData(query);
             if(res.next()){
-                customer.setCustomerId(res.getInt("customerId"));
+                customer = new Customer();
+                customer.setCustomerId(res.getInt("maxCustomerId"));
             }
         }
         catch(Exception e){
@@ -62,12 +65,13 @@ public class CustomerDataAccess {
 
     public static Customer getTotal(int id,Double total){
 
-        String query = "select SUM(price) from customer where customerId = " + id;
+        String query = "select SUM(price) as sumPrice from customer where customerId = '"+ id +"'";
         Customer customer = null;
         try{
             ResultSet res = DbOperations.getData(query);
             if(res.next()){
-                customer.setPrice(res.getInt("SUM(price)"));
+                customer = new Customer();
+                customer.setPrice(res.getInt("sumPrice"));
             }
         }
         catch(Exception e){
@@ -76,21 +80,24 @@ public class CustomerDataAccess {
         return customer;
     }
 
-    public static CustomerTable getItemsWhereId(int id){
+    public static ObservableList<CustomerTable> getItemsWhereId(int id){
 
-        String query = "select * from customer where customerId = " + id;
+        ObservableList<CustomerTable> listData = FXCollections.observableArrayList();
+
+        String query = "select * from customer where customerId = '"+ id +"'";
         CustomerTable customerTable = null;
         try{
             ResultSet res = DbOperations.getData(query);
             while(res.next()){
-                customerTable = new CustomerTable(res.getString("productName"),String.valueOf(res.getString("quantity")),String.valueOf(res.getString("price")));
+                customerTable = new CustomerTable(res.getInt("id"),res.getString("productName"),String.valueOf(res.getString("quantity")),String.valueOf(res.getString("price")));
+                listData.add(customerTable);
             }
 
         }
         catch(Exception e){
             JOptionPane.showMessageDialog(null, e, "Message", JOptionPane.ERROR_MESSAGE);
         }
-        return customerTable;
+        return listData;
 
     }
 
@@ -101,12 +108,13 @@ public class CustomerDataAccess {
 
     public static Customer getQuantity(){
 
-        String query = "select COUNT(quantity) from customer";
+        String query = "select SUM(quantity) as quantitySum from customer";
         Customer customer = null;
         try{
             ResultSet res = DbOperations.getData(query);
-            if(res.next()){
-                customer.setQuantity(res.getInt("SUM(total)"));
+            while(res.next()){
+                customer = new Customer();
+                customer.setQuantity(res.getInt("quantitySum"));
             }
         }
         catch(Exception e){

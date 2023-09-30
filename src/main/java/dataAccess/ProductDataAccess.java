@@ -1,6 +1,8 @@
 package dataAccess;
 
 import alerts.AlertMessages;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import model.*;
 
 import javax.swing.*;
@@ -8,21 +10,24 @@ import java.sql.ResultSet;
 
 public class ProductDataAccess {
 
-    public static ProductTable getProducts(){
+    public static ObservableList<ProductTable> getProducts(){
+
+        ObservableList<ProductTable> listData = FXCollections.observableArrayList();
 
         String query = "select * from product";
         ProductTable productTable = null;
         try{
             ResultSet res = DbOperations.getData(query);
             while(res.next()){
-                productTable = new ProductTable(res.getString("productId"),res.getString("productName"),res.getString("type"),String.valueOf(res.getInt("stock")),String.valueOf(res.getInt("price")),String.valueOf(res.getDate("date")));
+                productTable = new ProductTable(res.getInt("id"),res.getString("productId"),res.getString("productName"),res.getString("type"),String.valueOf(res.getInt("stock")),String.valueOf(res.getInt("price")),String.valueOf(res.getDate("date")),res.getString("image"));
+                listData.add(productTable);
             }
 
         }
         catch(Exception e){
             JOptionPane.showMessageDialog(null, e, "Message", JOptionPane.ERROR_MESSAGE);
         }
-        return productTable;
+        return listData;
 
     }
 
@@ -58,7 +63,8 @@ public class ProductDataAccess {
         Product product = null;
         try{
             ResultSet res = DbOperations.getData(query);
-            while(res.next()){
+            if(res.next()){
+                product = new Product();
                 product.setProductId(res.getString("productId"));
             }
         }
@@ -102,7 +108,9 @@ public class ProductDataAccess {
         DbOperations.setDataOrDelete(query, "Deleted product Successfully!");
     }
 
-    public static Item getItems(){
+    public static ObservableList<Item> getItems(){
+
+        ObservableList<Item> listItemData = FXCollections.observableArrayList();
 
         String query = "select * from product";
         Item item = null;
@@ -115,13 +123,14 @@ public class ProductDataAccess {
                 item.setPrice(res.getInt("price"));
                 item.setId(res.getInt("id"));
                 item.setImage(res.getString("image"));
+                listItemData.add(item);
             }
 
         }
         catch(Exception e){
             JOptionPane.showMessageDialog(null, e, "Message", JOptionPane.ERROR_MESSAGE);
         }
-        return item;
+        return listItemData;
 
     }
 
@@ -136,12 +145,15 @@ public class ProductDataAccess {
         try{
             ResultSet res = DbOperations.getData(query);
             if(res.next()){
-                check = res.getString("status");
+                product = new Product();
+                product.setStatus(res.getString("status"));
             }
 
-            if(check.equals("Available") || quantity == 0){
+            check = product.getStatus();
+
+            if(check.equals("Unavailable") || quantity == 0){
                 AlertMessages alert = new AlertMessages();
-                alert.errorMessage("error","Error Message","Something Wrong");
+                alert.errorMessage("error","Error Message","Something is Wrong");
             }
             else{
                 CustomerDataAccess.save(customer);
@@ -164,6 +176,7 @@ public class ProductDataAccess {
         try{
             ResultSet res = DbOperations.getData(query);
             while(res.next()){
+                product = new Product();
                 product.setStock(res.getInt("stock"));
             }
         }
@@ -173,14 +186,8 @@ public class ProductDataAccess {
         return product;
     }
 
-    public static void updateStock(Product product,Integer id){
-        String query = "update product set" +
-                "productName = '"+ product.getProductName() +"', type = '" + product.getType() +"'," +
-                "stock = '"+ product.getStock() +"'," +
-                "price = '"+ product.getPrice() +"'," +
-                "status = '"+ product.getStatus() +"'," +
-                "image = '"+ product.getImage() +"'," +
-                "date = '"+product.getDate()+"' where id = " + id;
+    public static void updateStock(int stock,String name){
+        String query = "update product set stock = '"+ stock +"' where productName = '"+ name +"'";
         DbOperations.setDataOrDelete(query, "Updated product Successfully!");
 
 

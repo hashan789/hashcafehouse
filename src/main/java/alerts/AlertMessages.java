@@ -8,10 +8,10 @@ public class AlertMessages {
 
     public void errorMessage(String alertType,String message, String Content){
 
-        if(alertType == "error"){
+        if(alertType.equals("error")){
             alert = new Alert(Alert.AlertType.ERROR);
         }
-        else if(alertType == "information"){
+        else if(alertType.equals("information")){
             alert = new Alert(Alert.AlertType.INFORMATION);
         }
         alert.setTitle(message);

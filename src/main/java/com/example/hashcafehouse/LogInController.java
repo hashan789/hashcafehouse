@@ -166,6 +166,7 @@ public class LogInController {
                 if(user.getUsername().equals(usernamelogin.getText())){
 
                     Data.username = name;
+                    Data.email = user.getEmail();
 
                         Parent root = FXMLLoader.load(getClass().getResource("mainForm.fxml"));
                         Stage stage = new Stage();

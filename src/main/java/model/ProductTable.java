@@ -19,13 +19,15 @@ public class ProductTable {
     private SimpleStringProperty date;
     private SimpleStringProperty image;
 
-    public ProductTable(String productId, String productName, String type, String stock, String price, String date){
+    public ProductTable(int id,String productId, String productName, String type, String stock, String price, String date, String image){
+        this.id = new SimpleIntegerProperty(id);
         this.productId = new SimpleStringProperty(productId);
         this.productName = new SimpleStringProperty(productName);
         this.type = new SimpleStringProperty(type);
         this.stock = new SimpleStringProperty(stock);
         this.price = new SimpleStringProperty(price);
         this.date = new SimpleStringProperty(date);
+        this.image = new SimpleStringProperty(image);
     }
 
     public String getStock() {

@@ -44,7 +44,7 @@ public class MainFormController implements Initializable {
     private Button clearBtn;
 
     @FXML
-    private AreaChart<?, ?> customerChart;
+    private AreaChart<Date, Integer> customerChart;
 
     @FXML
     private Button customerBtn;
@@ -71,6 +71,12 @@ public class MainFormController implements Initializable {
     private TableColumn<ReceiptTable, String> customerTotal;
 
     @FXML
+    private Label dashUsername;
+
+    @FXML
+    private Label dashEmail;
+
+    @FXML
     private Button dashboardBtn;
 
     @FXML
@@ -83,7 +89,7 @@ public class MainFormController implements Initializable {
     private Button importBtn;
 
     @FXML
-    private AreaChart<?, ?> incomeChart;
+    private AreaChart<Date, Double> incomeChart;
 
     @FXML
     private Button inventoryBtn;
@@ -211,12 +217,16 @@ public class MainFormController implements Initializable {
 
     private String[] statusList = {"Available", "Unavailable"};
 
-    private ObservableList<Item> itemListData;
+  //  private ObservableList<Item> itemListData;
     private ObservableList<ReceiptTable> customerListData;
 
     public void displayName() {
         String user = Data.username;
         user = user.substring(0, 1).toUpperCase() + user.substring(1);
+        dashUsername.setText(user);
+
+        String email = Data.email;
+        dashEmail.setText(email);
     }
 
     public void displayDashboardCustomers(){
@@ -237,8 +247,9 @@ public class MainFormController implements Initializable {
 
         try{
             Receipt receipt = ReceiptDataAccess.getSumIdWithdate();
-            double sumId = receipt.getTotal();
-            todayIncome.setText("$" + sumId);
+            float sumId = receipt.getSumTotal();
+            System.out.println(sumId);
+            todayIncome.setText("$ " + sumId);
         }
         catch (Exception e){
             e.printStackTrace();
@@ -250,8 +261,9 @@ public class MainFormController implements Initializable {
 
         try{
             Receipt receipt = ReceiptDataAccess.getSumId();
-            double sumId = receipt.getTotal();
-            todayIncome.setText("$" + Float.parseFloat(String.valueOf(sumId)));
+            float sumId = receipt.getSumTotal();
+            System.out.println(sumId);
+            totalIncome.setText("$ "+ sumId);
         }
         catch (Exception e){
             e.printStackTrace();
@@ -264,7 +276,7 @@ public class MainFormController implements Initializable {
         try{
             Customer customer = CustomerDataAccess.getQuantity();
             int noOfPrducts = customer.getQuantity();
-            totalIncome.setText(String.valueOf(noOfPrducts));
+            noOfSoldProducts.setText(String.valueOf(noOfPrducts));
         }
         catch (Exception e){
             e.printStackTrace();
@@ -278,7 +290,7 @@ public class MainFormController implements Initializable {
         XYChart.Series chart = new XYChart.Series();
         try{
             Receipt receipt = ReceiptDataAccess.getSumTotalAndDate();
-            chart.getData().add(new XYChart.Data<>(receipt.getTotal(),receipt.getDate()));
+            chart.getData().add(new XYChart.Data<>(String.valueOf(receipt.getDate()),receipt.getSumTotal()));
 
             incomeChart.getData().add(chart);
         }
@@ -293,8 +305,8 @@ public class MainFormController implements Initializable {
 
         XYChart.Series chart = new XYChart.Series();
         try{
-            Receipt receipt = ReceiptDataAccess.getSumTotalAndDate();
-            chart.getData().add(new XYChart.Data<>(receipt.getTotal(),receipt.getDate()));
+            Receipt receipt = ReceiptDataAccess.getSumIdAndDate();
+            chart.getData().add(new XYChart.Data<>(String.valueOf(receipt.getDate()),receipt.getId()));
 
             customerChart.getData().add(chart);
         }
@@ -318,23 +330,8 @@ public class MainFormController implements Initializable {
     return  listData;
     }
 
-
-    public ObservableList<ReceiptTable> customersDataList(){
-
-        ObservableList<ReceiptTable> listData = FXCollections.observableArrayList();
-        try {
-            ReceiptTable receiptTable = ReceiptDataAccess.getReciepts();
-            listData.add(receiptTable);
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
-
-        return listData;
-    }
-
     public void customerShowData(){
-        customerListData = customersDataList();
+        customerListData = ReceiptDataAccess.getReciepts();
 
         customerId.setCellValueFactory(cellData -> cellData.getValue().customerIdProperty());
         customerTotal.setCellValueFactory(cellData -> cellData.getValue().totalProperty());
@@ -347,18 +344,18 @@ public class MainFormController implements Initializable {
 
     public void menuAmount(){
         menuGetTotal();
-        if(menuamount.getText().isEmpty() || total == 0){
+        if(amountPay.getText().isEmpty() || total == 0){
             AlertMessages alert = new AlertMessages();
             alert.errorMessage("error","Error Message","invalid");
         }
         else{
-            amount = Double.parseDouble(menuamount.getText());
+            amount = Double.parseDouble(amountPay.getText());
             if(amount < total){
-                menuamount.setText("");
+                menuChange.setText("$ 0.0");
             }
             else{
                 change = (amount - total);
-                menuamount.setText("$" + change);
+                menuChange.setText("$" + change);
             }
         }
     }
@@ -388,42 +385,20 @@ public class MainFormController implements Initializable {
 
     }
 
-    public ObservableList<Item> menuGetData(){
-
-        ObservableList<Item> listData = FXCollections.observableArrayList();
-
-        Item item = new Item();
-        item = ProductDataAccess.getItems();
-        listData.add(item);
-
-        return listData;
-    }
-
-    public ObservableList<CustomerTable> menuGetOrder(){
-        customerId();
-
-        ObservableList<CustomerTable> listData = FXCollections.observableArrayList();
-
-        CustomerTable customerTable = CustomerDataAccess.getItemsWhereId(cid);
-        listData.add(customerTable);
-
-        return listData;
-    }
-
-
-
     public ObservableList<CustomerTable> menuListData;
     private ObservableList<CustomerTable> menuOrderListData;
 
     public void menuShowOrderData(){
 
-        menuOrderListData = menuGetOrder(); //menuGetOrder()
+        customerId();
+
+        menuOrderListData = CustomerDataAccess.getItemsWhereId(cid); //menuGetOrder()
 
         menuProductName.setCellValueFactory(cellData -> cellData.getValue().productNameProperty());
         menuQuantity.setCellValueFactory(cellData -> cellData.getValue().quantityProperty());
         menuPrice.setCellValueFactory(cellData -> cellData.getValue().priceProperty());
 
-        menuTable.setItems(menuListData);
+        menuTable.setItems(menuOrderListData);
 
     }
 
@@ -442,8 +417,10 @@ public class MainFormController implements Initializable {
 
     public void menuDisplayCard(){
 
-        itemListData.clear();
-        itemListData.addAll(menuGetData());
+        ObservableList<Item> itemListData = FXCollections.observableArrayList();
+
+//        itemListData.clear();
+        itemListData.addAll(ProductDataAccess.getItems());
 
         int row = 0;
         int column = 0;
@@ -502,6 +479,7 @@ public class MainFormController implements Initializable {
 
             chooseStatus();
             chooseType();
+            inventoryShowData();
         }
         else if(event.getSource() == menuBtn){
             tableView.setVisible(false);
@@ -532,7 +510,7 @@ public class MainFormController implements Initializable {
         try{
             Customer cId = CustomerDataAccess.getMaxId();
             cid = cId.getCustomerId();
-            Receipt checkId = ReceiptDataAccess.gerMaxId();
+            Receipt checkId = ReceiptDataAccess.getMaxId();
             int checkid = checkId.getCustomerId();
 
             if(cid == 0){
@@ -579,11 +557,11 @@ public class MainFormController implements Initializable {
             alert.errorMessage("error","Error Message","Please fill all blank fields");
         }
         else{
-            String checkProd = productId.getText();
+            String checkProd = productIdF.getText();
             Product productwithid = ProductDataAccess.getProductId(checkProd);
             if(productwithid != null){
                 AlertMessages alert = new AlertMessages();
-                alert.errorMessage("alert","Error Message",checkProd + " is already taken");
+                alert.errorMessage("error","Error Message",checkProd + " is already taken");
             }
             else{
                 try {
@@ -628,6 +606,7 @@ public class MainFormController implements Initializable {
         priceF.setText("");
         statusF.getSelectionModel().clearSelection();
         Data.path = "";
+        Data.id = 0;
         productImage.setImage(null);
 
     }
@@ -652,7 +631,7 @@ public class MainFormController implements Initializable {
         else{
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Error Message");
-            alert.setHeaderText("Are you sure want to delete product ID: " + productId.getText());
+            alert.setHeaderText("Are you sure want to delete product ID: " + productIdF.getText());
             Optional<ButtonType> option = alert.showAndWait();
 
             if(option.get().equals(ButtonType.OK)){
@@ -763,8 +742,7 @@ public class MainFormController implements Initializable {
                 productTypeF.getSelectionModel().getSelectedItem() == null||
                 stockF.getText().isEmpty() ||
                 priceF.getText().isEmpty() ||
-                statusF.getSelectionModel().getSelectedItem() == null ||
-                Data.path == null){
+                statusF.getSelectionModel().getSelectedItem() == null || Data.id == 0 || Data.path == null){
             AlertMessages alert = new AlertMessages();
             alert.errorMessage("error","Error Message","Please fill all blank fields");
         }
@@ -778,7 +756,7 @@ public class MainFormController implements Initializable {
             product.setStatus(String.valueOf(statusF.getSelectionModel().getSelectedItem()));
 
             String path = Data.path;
-            path = path.replace("\\", "\\\\");
+           // path = path.replace("\\", "\\\\");
 
             product.setImage(path);
 
@@ -791,7 +769,7 @@ public class MainFormController implements Initializable {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.setTitle("Error Message");
                 alert.setContentText(null);
-                alert.setContentText("Are you sure you want to update product ID: " + productIdF);
+                alert.setContentText("Are you sure you want to update product ID: " + productIdF.getText());
                 Optional<ButtonType> option = alert.showAndWait();
 
                 if(option.get().equals(ButtonType.OK)){
@@ -813,23 +791,12 @@ public class MainFormController implements Initializable {
 
     }
 
-    public ObservableList<ProductTable> inventoryDataList(){
-        ObservableList<ProductTable> listData = FXCollections.observableArrayList();
-        try{
-            ProductTable productTable = ProductDataAccess.getProducts();
-            listData.add(productTable);
-        }
-        catch(Exception e){
-            e.printStackTrace();
-        }
 
-        return listData;
-    }
 
     private ObservableList<ProductTable> inventoryListData;
 
     public void inventoryShowData(){
-        inventoryListData = inventoryDataList();
+        inventoryListData = ProductDataAccess.getProducts();
         productId.setCellValueFactory(cellData -> cellData.getValue().productIdProperty());
         productName.setCellValueFactory(cellData -> cellData.getValue().productNameProperty());
         productType.setCellValueFactory(cellData -> cellData.getValue().typeProperty());
@@ -851,11 +818,15 @@ public class MainFormController implements Initializable {
         productIdF.setText(product.getProductId());
         productNameF.setText(product.getProductName());
         stockF.setText(String.valueOf(product.getStock()));
-        price.setText(String.valueOf(product.getPrice()));
+        priceF.setText(String.valueOf(product.getPrice()));
+
 
         Data.path = "File:" + product.getImage();
         image = new Image(Data.path,120,127,false,true);
         productImage.setImage(image);
+
+        Data.date = String.valueOf(product.getDate());
+        Data.id = product.getId();
 
         System.out.println("sd");
     }
@@ -885,6 +856,7 @@ public class MainFormController implements Initializable {
                     receipt.setTotal(total);
                     receipt.setDate(sqlDate);
                     receipt.setUsername(Data.username);
+                    ReceiptDataAccess.save(receipt);
 
                     menuShowOrderData();
                     menuRestart();
@@ -925,24 +897,24 @@ public class MainFormController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
-        displayDashboardCustomers();
-        displayDashboardTodayIncome();
-        displayDashboardTotalIncome();
-        displayDashboardSoldProducts();
+        displayName();
 
+        displayDashboardCustomers();
+        displayDashboardTotalIncome();
+        displayDashboardTodayIncome();
+        displayDashboardSoldProducts();
         dashboardIncomeChart();
         dashboardCustomerChart();
+
 
         chooseStatus();
         chooseType();
         inventoryShowData();
-        //menuDisplayCard();
+
         menuDisplayOrder();
-        menuDisplayTotal();
-        menuShowOrderData();
         menuDisplayCard();
-        menuGetOrder();
-        customerShowData();
+        menuShowOrderData();
+        menuDisplayTotal();
 
 
 
