@@ -18,6 +18,7 @@ public class CustomerDataAccess {
         Customer customer = null;
         try{
             ResultSet res = DbOperations.getData(query);
+            customer = new Customer();
             if(res.next()){
                 customer.setId(res.getInt("id"));
                 customer.setCustomerId(res.getInt("customerId"));

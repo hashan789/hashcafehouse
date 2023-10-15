@@ -168,7 +168,9 @@ public class LogInController {
                     Data.username = name;
                     Data.email = user.getEmail();
 
-                        Parent root = FXMLLoader.load(getClass().getResource("mainForm.fxml"));
+                    FXMLLoader loader = new FXMLLoader();
+
+                        Parent root = loader.load(getClass().getResource("mainForm.fxml"));
                         Stage stage = new Stage();
                         Scene scene = new Scene(root);
                         stage.setTitle("Main Form");
@@ -181,9 +183,11 @@ public class LogInController {
             }
         }
 
-        public void switchForgetPassword(){
+        public void switchForgetPassword(ActionEvent event){
             forgetPassword.setVisible(true);
             login.setVisible(false);
+
+            switchForm(event);
         }
 
         public void changePassword(){

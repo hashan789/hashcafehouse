@@ -22,7 +22,7 @@ public class UserDataAccess {
         User user = null;
         try{
             ResultSet res = DbOperations.getData("select * from user where name='"+username+"' and password='"+password+"'");
-            while(res.next()){
+            if(res.next()){
                 user = new User();
                 user.setEmail(res.getString("email"));
                 user.setUsername(res.getString("name"));
